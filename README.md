@@ -34,3 +34,5 @@ Ada 4 tabel yang tersedia,
     + quantity : jumlah barang yang dibeli dari masing-masing produk
 
 
+
+Project ini dapat diakses melalui https://academy.dqlab.id/main/package/project/261.
