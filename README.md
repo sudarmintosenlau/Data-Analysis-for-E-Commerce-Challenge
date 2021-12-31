@@ -36,3 +36,6 @@ Ada 4 tabel yang tersedia,
 
 
 Project ini dapat diakses melalui https://academy.dqlab.id/main/package/project/261.
+
+![image](https://user-images.githubusercontent.com/62486840/147809285-27d6bf99-763e-47a9-bcd8-189494afcfb9.png)
+
