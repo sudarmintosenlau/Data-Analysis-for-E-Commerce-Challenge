@@ -83,9 +83,45 @@ keluaran:
 
 ![image](https://user-images.githubusercontent.com/62486840/147819646-5dacb558-1512-416f-9d59-b4a9c72bd327.png)
 
+### 3. Menampilkan Pelanggan dengan rata-rata transaksi terbesar di Januari 2020
+Query SQL berikut ini agar menampilkan 10 pembeli dengan rata-rata nilai transaksi terbesar yang bertransaksi minimal 2 kali di Januari 2020.
+```
+SELECT 
+	buyer_id, 
+	count(1) as jumlah_transaksi, 
+	avg(total) as avg_nilai_transaksi
+FROM 
+	orders
+WHERE 
+	created_at>='2020-01-01' and created_at<'2020-02-01'
+GROUP BY 1
+having count(1)>= 2
+ORDER BY 3 desc
+limit 10;
+```
+keluaran:
 
+![image](https://user-images.githubusercontent.com/62486840/147820925-5e977970-c212-477d-9a2f-646781455aad.png)
 
+### 4. Menampilkan transaksi-transaksi besar di Desember 2019
+Query SQL berikut ini akan menampilkan semua nilai transaksi minimal 20,000,000 di bulan Desember 2019, dengan menampilkan nama_pembeli, nilai transaksi dan tanggal_transaksi, urutkan sesuai abjad pembeli
+```
+SELECT 
+	nama_user as nama_pembeli, 
+	total as nilai_transaksi, 
+	created_at as tanggal_transaksi
+FROM 
+	orders
+inner join 
+	users on buyer_id = user_id
+WHERE 
+	created_at>='2019-12-01' and created_at<'2020-01-01'
+and total >= 20000000
+OLDER BY 1
+```
+keluaran:
 
+![image](https://user-images.githubusercontent.com/62486840/147821132-f7e7369e-4722-4b01-be3b-f6b0bc206082.png)
 
 
 
