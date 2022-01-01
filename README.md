@@ -166,7 +166,9 @@ keluaran:
 
 ### 7. Mencari tahu pelanggan yang menjadi dropshipper
 Mencari tahu pengguna yang menjadi dropshipper, yakni pembeli yang membeli barang akan tetapi dikirim ke orang lain. Ciri-cirinya yakni transaksinya banyak, dengan alamat yang berbeda-beda.
+
 Dengan SQL query untuk mencari pembeli dengan 10 kali transaksi atau lebih yang alamat pengiriman transaksi selalu berbeda setiap transaksi.
+
 Menampilkan nama_pembeli, jumlah_transaksi, distinct_kodepos, total_nilai_transaksi, avg_nilai_transaksi. Urutkan dari jumlah transaksi terbesar.
 ```
 SELECT
@@ -187,7 +189,9 @@ keluaran:
 
 ### 8. Mencari reseller Offline atau toko offline
 Mencari tahu jenis pengguna yang menjadi reseller offline atau mempunyai toko offline, yakni pembeli yang sering sekali membeli barang dan seringnya dikirimkan ke alamat yang sama. Pembelian juga dengan quantity produk yang banyak. Sehingga kemungkinan barang ini akan dijual lagi.
+
 SQL query berikut ini untuk mencari pembeli yang punya 8 tau lebih transaksi yang alamat pengiriman transaksi sama dengan alamat pengiriman utama, dan rata-rata total quantity per transaksi lebih dari 10.
+
 Dengan menampilkan nama_pembeli, jumlah_transaksi, total_nilai_transaksi, avg_nilai_transaksi, avg_quantity_per_transaksi. Urutkan dari total_nilai_transaksi yang paling besar
 ```
 SELECT
@@ -208,8 +212,56 @@ keluaran:
 
 ![image](https://user-images.githubusercontent.com/62486840/147850742-63bee194-9e83-4bf2-85c6-40f98f6119d8.png)
 
+### 9. Mencari pembeli sekaligus penjual
+Dengan membuat SQL query untuk mencari penjual yang juga pernah bertransaksi sebagai pembeli minimal 7 kali.
 
+Menampilkan nama_pengguna, jumlah_transaksi_beli, jumlah_transaksi_jual. Urutkan berdasarkan abjad dari nama_pengguna
+```
+SELECT
+   nama_user as nama_pengguna,
+   jumlah_transaksi_beli,
+   jumlah_transaksi_jual
+FROM
+  users INNER JOIN (SELECT buyer_id,
+ count(1) as jumlah_transaksi_beli
+ FROM
+ Orders  group by 1) as buyer
+ ON buyer_id=user_id
+INNER JOIN (
+ SELECT seller_id,
+ count(1) as jumlah_transaksi_jual
+  FROM
+ Orders  group by 1) as seller
+ ON seller_id=user_id
+WHERE jumlah_transaksi_beli >= 7
+ORDER BY 1
+```
+keluaran:
 
+![image](https://user-images.githubusercontent.com/62486840/147850823-e5533551-ce0b-4825-9541-fdea5d88f4c1.png)
+
+### 10. Mengetahui bagaimana trend lama waktu transaksi dibayar sejak dibuat
+ Metahui bagaimana trend lama waktu transaksi dibayar sejak dibuat.
+
+Mem SQL Query untuk menghitung rata-rata lama waktu dari transaksi dibuat sampai dibayar, dikelompokkan per bulan.
+
+Menampilkan tahun_bulan, jumlah_transaksi, avg_lama_dibayar, min_lama_dibayar, max_lama_dibayar. Mengurutkan berdasarkan tahun_bulan
+
+```
+select
+ EXTRACT(YEAR_MONTH from created_at) as tahun_bulan,
+ count(1) as jumlah_transaksi,
+ avg(datediff(paid_at,created_at)) as avg_lama_dibayar,
+ min(datediff(paid_at,created_at)) min_lama_dibayar,
+ max(datediff(paid_at,created_at)) max_lama_dibayar
+from orders 
+where paid_at IS NOT NULL 
+group by 1 
+order by 1
+```
+keluaran:
+
+![image](https://user-images.githubusercontent.com/62486840/147850875-e74e0ccb-7041-4e39-a87e-b4b3a5201dda.png)
 
 
 Project ini dapat diakses melalui https://academy.dqlab.id/main/package/project/261.
