@@ -123,6 +123,90 @@ keluaran:
 
 ![image](https://user-images.githubusercontent.com/62486840/147821132-f7e7369e-4722-4b01-be3b-f6b0bc206082.png)
 
+### 5. Menampilkan kategori Produk Terlaris di 2020
+Query SQL berikut ini agar menampilkan 5 Kategori dengan total quantity terbanyak di tahun 2020, hanya untuk transaksi yang sudah terkirim ke pembeli. Menampilkan category, total_quantity, total_price.
+```
+SELECT 
+	category, 
+	sum(quantity) as total_quantity, 
+	sum(price) as total_price
+FROM 
+	orders
+inner join order_details using(order_id)
+inner join products using(product_id)
+WHERE 
+	created_at>='2020-01-01'
+	and delivery_at IS NOT NULL
+GROUP BY 1
+ORDER BY 2 desc
+limit 5
+```
+keluaran:
+
+![image](https://user-images.githubusercontent.com/62486840/147850521-18d36e70-d754-48e5-b3c4-f076fd9684f9.png)
+
+### 6. Mencari pelanggan yang high value
+Query SQL untuk mencari pembeli yang sudah bertransaksi lebih dari 5 kali, dan setiap transaksi lebih dari 2,000,000.
+Dengan menampilkan nama_pembeli, jumlah_transaksi, total_nilai_transaksi, min_nilai_transaksi kemudian mengurutkan dari total_nilai_transaksi terbesar.
+```
+SELECT
+   nama_user as nama_pembeli,
+   count(1) as jumlah_transaksi, 
+   sum(total) as total_nilai_transaksi, 
+   min(total) as min_nilai_transaksi
+FROM
+   orders INNER JOIN users ON buyer_id = user_id 
+GROUP BY user_id, nama_user
+HAVING count(1)> 5 and min(total)> 2000000
+ORDER BY 3 DESC;
+```
+keluaran:
+
+![image](https://user-images.githubusercontent.com/62486840/147850587-bf35b788-ebfb-4a1e-9523-5605589200e3.png)
+
+### 7. Mencari tahu pelanggan yang menjadi dropshipper
+Mencari tahu pengguna yang menjadi dropshipper, yakni pembeli yang membeli barang akan tetapi dikirim ke orang lain. Ciri-cirinya yakni transaksinya banyak, dengan alamat yang berbeda-beda.
+Dengan SQL query untuk mencari pembeli dengan 10 kali transaksi atau lebih yang alamat pengiriman transaksi selalu berbeda setiap transaksi.
+Menampilkan nama_pembeli, jumlah_transaksi, distinct_kodepos, total_nilai_transaksi, avg_nilai_transaksi. Urutkan dari jumlah transaksi terbesar.
+```
+SELECT
+   nama_user as nama_pembeli,
+   count(1) as jumlah_transaksi, 
+   count(distinct orders.kodepos) as distinct_kodepos,
+   sum(total) as total_nilai_transaksi, 
+   avg(total) as avg_nilai_transaksi
+FROM
+   orders INNER JOIN users ON buyer_id = user_id 
+GROUP BY user_id, nama_user
+HAVING count(1)>= 10 and count(1)=count(distinct orders.kodepos)
+ORDER BY 2 DESC;
+```
+keluaran:
+
+![image](https://user-images.githubusercontent.com/62486840/147850642-f00a4087-7989-4860-8048-9ca5277b7da5.png)
+
+### 8. Mencari reseller Offline atau toko offline
+Mencari tahu jenis pengguna yang menjadi reseller offline atau mempunyai toko offline, yakni pembeli yang sering sekali membeli barang dan seringnya dikirimkan ke alamat yang sama. Pembelian juga dengan quantity produk yang banyak. Sehingga kemungkinan barang ini akan dijual lagi.
+SQL query berikut ini untuk mencari pembeli yang punya 8 tau lebih transaksi yang alamat pengiriman transaksi sama dengan alamat pengiriman utama, dan rata-rata total quantity per transaksi lebih dari 10.
+Dengan menampilkan nama_pembeli, jumlah_transaksi, total_nilai_transaksi, avg_nilai_transaksi, avg_quantity_per_transaksi. Urutkan dari total_nilai_transaksi yang paling besar
+```
+SELECT
+   nama_user as nama_pembeli,
+   count(1) as jumlah_transaksi, 
+   sum(total) as total_nilai_transaksi, 
+   avg(total) as avg_nilai_transaksi,
+   avg(total_quantity) as avg_quantity_per_transaksi
+FROM
+   orders INNER JOIN users ON buyer_id = user_id INNER JOIN (select order_id, 
+   sum(quantity) as total_quantity from order_details group by 1) as summary_order using(order_id)
+WHERE orders.kodepos=users.kodepos
+GROUP BY user_id, nama_user
+HAVING count(1)>= 8 AND avg(total_quantity)>10
+ORDER BY 3 DESC;
+```
+keluaran:
+
+![image](https://user-images.githubusercontent.com/62486840/147850742-63bee194-9e83-4bf2-85c6-40f98f6119d8.png)
 
 
 
